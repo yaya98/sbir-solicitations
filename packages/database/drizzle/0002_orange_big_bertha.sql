@@ -1,0 +1,1 @@
+ALTER TABLE "solicitation" ADD CONSTRAINT "solicitation_solicitation_number_unique" UNIQUE("solicitation_number");
