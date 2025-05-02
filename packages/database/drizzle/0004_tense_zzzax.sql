@@ -1,0 +1,1 @@
+CREATE INDEX "solicitation_title_index" ON "solicitation" USING btree ("solicitation_title");

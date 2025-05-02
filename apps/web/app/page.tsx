@@ -1,98 +1,88 @@
-import Image, { type ImageProps } from "next/image";
-import styles from "./page.module.css";
+"use client";
 
-type Props = Omit<ImageProps, "src"> & {
-  srcLight: string;
-  srcDark: string;
-};
-
-const ThemeImage = (props: Props) => {
-  const { srcLight, srcDark, ...rest } = props;
-
-  return (
-    <>
-      <Image {...rest} src={srcLight} className="imgLight" />
-      <Image {...rest} src={srcDark} className="imgDark" />
-    </>
-  );
-};
+import { useEffect, useState } from "react";
+import SolicitationCard from "components/SolicitationCard";
+import { Solicitation } from "models/Solicitation";
 
 export default function Home() {
-  return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <ThemeImage
-          className={styles.logo}
-          srcLight="turborepo-dark.svg"
-          srcDark="turborepo-light.svg"
-          alt="Turborepo logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>apps/web/app/page.tsx</code>
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [solicitations, setSolicitations] = useState<Solicitation[]>([]);
+  const [keyword, setKeyword] = useState("");
+  const [agency, setAgency] = useState("");
 
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new/clone?demo-description=Learn+to+implement+a+monorepo+with+a+two+Next.js+sites+that+has+installed+three+local+packages.&demo-image=%2F%2Fimages.ctfassets.net%2Fe5382hct74si%2F4K8ZISWAzJ8X1504ca0zmC%2F0b21a1c6246add355e55816278ef54bc%2FBasic.png&demo-title=Monorepo+with+Turborepo&demo-url=https%3A%2F%2Fexamples-basic-web.vercel.sh%2F&from=templates&project-name=Monorepo+with+Turborepo&repository-name=monorepo-turborepo&repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fturborepo%2Ftree%2Fmain%2Fexamples%2Fbasic&root-directory=apps%2Fdocs&skippable-integrations=1&teamSlug=vercel&utm_source=create-turbo"
-            target="_blank"
-            rel="noopener noreferrer"
+  useEffect(() => {
+    getSolicitations();
+  }, []);
+
+  const getSolicitations = async () => {
+    const SOLICITATION_BACKEND_API: string =
+      process.env.NEXT_PUBLIC_API_SERVER_URL || "http://localhost:8080";
+    if (!SOLICITATION_BACKEND_API) {
+      console.error("API server URL is not configured");
+      return;
+    }
+
+    try {
+      const url = new URL("/solicitations", SOLICITATION_BACKEND_API);
+
+      if (keyword) {
+        url.searchParams.append("keyword", keyword);
+      }
+      if (agency) {
+        url.searchParams.append("agency", agency);
+      }
+
+      const response = await fetch(url.toString());
+      if (!response.ok) {
+        throw new Error(`Error fetching with status: ${response.status}`);
+      }
+      const result = await response.json();
+      setSolicitations(result);
+    } catch (error) {
+      console.error("Error fetching solicitations:", error);
+      setSolicitations([]);
+    }
+  };
+
+  return (
+    <div className="container mx-auto p-8">
+      <div className="max-w-2xl mx-auto my-4 space-y-6">
+        <h1 className="text-2xl font-bold mb-6">SBIR Search</h1>
+
+        <div className="flex gap-2">
+          <input
+            type="text"
+            placeholder="Search by solicitation title or number"
+            className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            onChange={(e) => setKeyword(e.target.value)}
+          />
+          <button
+            className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+            onClick={getSolicitations}
           >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://turbo.build/docs?utm_source"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
+            Search
+          </button>
         </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com/templates?search=turborepo&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://turbo.build?utm_source=create-turbo"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to turbo.build →
-        </a>
-      </footer>
+
+        <div className="flex items-center gap-4">
+          <label className="flex items-center gap-2 text-gray-700">
+            Search by agency
+            <input
+              type="text"
+              placeholder="Agency name..."
+              className="px-3 py-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+              onChange={(e) => setAgency(e.target.value)}
+            />
+          </label>
+        </div>
+      </div>
+
+      <hr className="max-w-2xl mx-auto border-t border-gray-200 my-8" />
+
+      <div className="flex flex-col gap-4">
+        {solicitations.map((solicitation) => (
+          <SolicitationCard key={solicitation.id} solicitation={solicitation} />
+        ))}
+      </div>
     </div>
   );
 }

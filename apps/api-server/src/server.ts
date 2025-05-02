@@ -18,7 +18,8 @@ async function launch() {
 
   // Initialize services
   const solicitationApiService = new SolicitationApiService(
-    process.env.SBIR_API_URL || ""
+    process.env.SBIR_API_URL ||
+      "https://api.www.sbir.gov/public/api/solicitations"
   );
   const dbService = new DatabaseService();
   const scheduler = new SchedulerService(

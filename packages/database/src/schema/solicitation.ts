@@ -1,4 +1,5 @@
 import { table } from "console";
+import { InferModel } from "drizzle-orm";
 import {
   date,
   index,
@@ -67,6 +68,7 @@ export const solicitation = pgTable(
   ]
 );
 
+export type Solicitation = typeof solicitation.$inferSelect;
 export type SolicitationSelect = typeof solicitation.$inferSelect;
 export type SolicitationInsert = typeof solicitation.$inferInsert;
 export const SolicitationSelect = createSelectSchema(solicitation);
