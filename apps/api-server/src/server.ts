@@ -17,9 +17,15 @@ async function launch() {
   const app = express();
 
   // Initialize services
-  const solicitationApiService = new SolicitationApiService(process.env.SBIR_API_URL || '');
+  const solicitationApiService = new SolicitationApiService(
+    process.env.SBIR_API_URL || ""
+  );
   const dbService = new DatabaseService();
-  const scheduler = new SchedulerService(solicitationApiService, dbService, Number(process.env.SCHEDULER_INTERVAL_MINUTES) || 60);
+  const scheduler = new SchedulerService(
+    solicitationApiService,
+    dbService,
+    Number(process.env.SCHEDULER_INTERVAL_MINUTES) || 60
+  );
 
   // Start the scheduler
   await scheduler.start();
@@ -27,26 +33,23 @@ async function launch() {
   // configure express
   app.use(cors({ origin: "http://localhost:3000" }));
 
-  // solicitation endpoints
-
   // GET all solicitations
   // GET solicitations?keyword=sbir
+  // GET solicitations?agency=HHS
+  // GET solicitations?keyword=sbir&agency=HHS
   app.get("/solicitations", async (req, res) => {
     try {
-      const keyword = req.query.keyword as string | undefined;
-      if (keyword) {
-        const solicitations = await dbService.getSolicitationsByKeyword(keyword);
-        res.json(solicitations);
-      } else {
-        const solicitations = await dbService.getAllSolicitations();
-        res.json(solicitations);
-      }
+      const { keyword, agency } = req.query;
+      const solicitations = await dbService.getAllSolicitations({
+        keyword: keyword as string,
+        agency: agency as string,
+      });
+      res.json(solicitations);
     } catch (error) {
       console.error("Error fetching solicitations:", error);
       res.status(500).json({ error: "Failed to fetch solicitations" });
     }
   });
-
 
   // health and test endpoints that don't require authentication
   app.get("/health", (_, res) => {
@@ -119,7 +122,7 @@ async function launch() {
     // force close after 30 seconds
     setTimeout(() => {
       console.error(
-        "Could not close connections in time, forcefully shutting down",
+        "Could not close connections in time, forcefully shutting down"
       );
       process.exit(1);
     }, 30 * 1000);
