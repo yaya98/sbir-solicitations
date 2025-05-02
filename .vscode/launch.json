@@ -1,0 +1,30 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug API Server",
+      "skipFiles": ["<node_internals>/**"],
+      "program": "${workspaceFolder}/apps/api-server/src/server.ts",
+      "runtimeArgs": ["-r", "ts-node/register"],
+      "sourceMaps": true,
+      "outFiles": ["${workspaceFolder}/apps/api-server/dist/**/*.js"],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "cwd": "${workspaceFolder}/apps/api-server"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug Tests",
+      "program": "${workspaceFolder}/apps/api-server/node_modules/jest/bin/jest",
+      "args": ["--runInBand"],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "sourceMaps": true,
+      "cwd": "${workspaceFolder}/apps/api-server"
+    }
+  ]
+}
