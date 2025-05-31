@@ -1,12 +1,39 @@
 import { Solicitation } from "models/Solicitation";
+import Timeline from "./Timeline";
+import TimelineModel from "models/TimelineModel";
 
 interface SolicitationDetailsProps {
   solicitation: Solicitation;
 }
 
+const isDatePassed = (date: string): boolean => {
+  return new Date().getTime() > new Date(date).getTime();
+};
+
 export default function SolicitationDetails({
   solicitation,
 }: SolicitationDetailsProps) {
+  let timelineData: TimelineModel[] = [];
+  timelineData.push({
+    label: "Release Date",
+    date: solicitation.releaseDate,
+    passed: isDatePassed(solicitation.releaseDate),
+  });
+  timelineData.push({
+    label: "Open Date",
+    date: solicitation.openDate,
+    passed: isDatePassed(solicitation.openDate),
+  });
+  timelineData.push({
+    label: "Due Dates",
+    date: solicitation.applicationDueDate.join(", "),
+  });
+  timelineData.push({
+    label: "Close Date",
+    date: solicitation.closeDate,
+    passed: isDatePassed(solicitation.closeDate),
+  });
+
   return (
     <div className="space-y-6">
       <div>
@@ -131,6 +158,10 @@ export default function SolicitationDetails({
           >
             View on Agency Website
           </a>
+        </div>
+
+        <div>
+          <Timeline timelineData={timelineData}></Timeline>
         </div>
       </div>
     </div>

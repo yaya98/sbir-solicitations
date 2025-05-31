@@ -14,5 +14,17 @@ services:
       - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
 
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: yehyah98@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: postgres
+    ports:
+      - "80:80"
+    links:
+      - "postgres"
+
+
 volumes:
   postgres_data:
