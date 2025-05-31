@@ -21,8 +21,8 @@ export default function Timeline({
 
     timelineData.forEach((item, i) => {
       // draw a circle for each timeline label
-      let cx = startX + i * (lineLength + 2 * circleRadius);
-      let fillColor = item.passed ? "darkgreen" : "grey";
+      const cx = startX + i * (lineLength + 2 * circleRadius);
+      const fillColor = item.passed ? "darkgreen" : "grey";
 
       svg
         .append("circle")

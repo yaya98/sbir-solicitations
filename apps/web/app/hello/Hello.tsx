@@ -5,11 +5,7 @@ import { useState } from "react";
 import { useAPI } from "trpc/hooks";
 import { HelloWorldPingRes } from "@repo/api-server";
 
-interface HelloProps {
-  example: string;
-}
-
-export default function Hello(_props: HelloProps) {
+export default function Hello() {
   const api = useAPI();
 
   const [state, setState] = useState<HelloWorldPingRes>();

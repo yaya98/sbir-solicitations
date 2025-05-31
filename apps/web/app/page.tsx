@@ -9,11 +9,7 @@ export default function Home() {
   const [keyword, setKeyword] = useState("");
   const [agency, setAgency] = useState("");
 
-  useEffect(() => {
-    getSolicitations();
-  }, []);
-
-  const getSolicitations = async () => {
+  async function getSolicitations() {
     const SOLICITATION_BACKEND_API: string =
       process.env.NEXT_PUBLIC_API_SERVER_URL || "http://localhost:8080";
     if (!SOLICITATION_BACKEND_API) {
@@ -41,7 +37,11 @@ export default function Home() {
       console.error("Error fetching solicitations:", error);
       setSolicitations([]);
     }
-  };
+  }
+
+  useEffect(() => {
+    getSolicitations();
+  }, []);
 
   return (
     <div className="container mx-auto p-8">

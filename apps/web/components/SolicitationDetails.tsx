@@ -13,7 +13,7 @@ const isDatePassed = (date: string): boolean => {
 export default function SolicitationDetails({
   solicitation,
 }: SolicitationDetailsProps) {
-  let timelineData: TimelineModel[] = [];
+  const timelineData: TimelineModel[] = [];
   timelineData.push({
     label: "Release Date",
     date: solicitation.releaseDate,
