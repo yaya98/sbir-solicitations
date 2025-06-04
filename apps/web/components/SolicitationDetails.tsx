@@ -25,10 +25,6 @@ export default function SolicitationDetails({
     passed: isDatePassed(solicitation.openDate),
   });
   timelineData.push({
-    label: "Due Dates",
-    date: solicitation.applicationDueDate.join(", "),
-  });
-  timelineData.push({
     label: "Close Date",
     date: solicitation.closeDate,
     passed: isDatePassed(solicitation.closeDate),
